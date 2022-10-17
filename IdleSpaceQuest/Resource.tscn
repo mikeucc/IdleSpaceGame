@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Resource.cs" type="Script" id=1]
+
+[node name="Resource" type="Label"]
+margin_right = 237.0
+margin_bottom = 40.0
+text = "Generating"
+align = 1
+valign = 1
+script = ExtResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 237.0
+margin_bottom = 40.0
+color = Color( 1, 1, 1, 0.392157 )
+
+[connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]

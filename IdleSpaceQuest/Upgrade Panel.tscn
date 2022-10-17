@@ -1,0 +1,199 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://UpgradeButtons.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Art/MainPanel01.png" type="Texture" id=2]
+[ext_resource path="res://ScrollContainer.cs" type="Script" id=3]
+[ext_resource path="res://UpgradePanel.cs" type="Script" id=4]
+[ext_resource path="res://Art/MainPanel03.png" type="Texture" id=5]
+[ext_resource path="res://Art/space_ships/TM_1.png" type="Texture" id=6]
+[ext_resource path="res://Art/space_ships/TM_1_Aerodynamics_Upgrade.png" type="Texture" id=7]
+[ext_resource path="res://Art/space_ships/TM_1_Better_Model_Upgrade.png" type="Texture" id=8]
+[ext_resource path="res://Art/space_ships/TM_1_Light_Weight_Upgrade.png" type="Texture" id=9]
+[ext_resource path="res://Art/MainPanel02.png" type="Texture" id=10]
+[ext_resource path="res://Resource.tscn" type="PackedScene" id=11]
+[ext_resource path="res://BattleSimulation.cs" type="Script" id=12]
+
+[sub_resource type="StyleBoxTexture" id=1]
+
+[node name="UpgradePanel" type="Panel"]
+margin_right = 1280.0
+margin_bottom = 718.0
+script = ExtResource( 4 )
+
+[node name="UpgradePanelBG" type="Sprite" parent="."]
+position = Vector2( 433, 255.25 )
+scale = Vector2( 1.05986, 0.993359 )
+texture = ExtResource( 2 )
+
+[node name="LogPanelBG" type="Sprite" parent="."]
+position = Vector2( 438.5, 615 )
+scale = Vector2( 2.8245, 1.36364 )
+texture = ExtResource( 5 )
+
+[node name="Panel" type="PanelContainer" parent="."]
+margin_left = 30.0
+margin_top = 547.0
+margin_right = 836.0
+margin_bottom = 693.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+margin_right = 806.0
+margin_bottom = 146.0
+scroll_horizontal_enabled = false
+script = ExtResource( 3 )
+
+[node name="ActionLog" type="VBoxContainer" parent="Panel/ScrollContainer"]
+
+[node name="Ship" type="Panel" parent="."]
+visible = false
+margin_left = 884.0
+margin_top = 547.0
+margin_right = 1264.0
+margin_bottom = 713.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Ship"]
+position = Vector2( 190.5, 87.75 )
+scale = Vector2( 0.802966, 0.879214 )
+texture = ExtResource( 6 )
+
+[node name="Sprite2" type="Sprite" parent="Ship"]
+visible = false
+position = Vector2( 0, 100 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 7 )
+
+[node name="Sprite3" type="Sprite" parent="Ship"]
+visible = false
+position = Vector2( 0, 100 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 8 )
+
+[node name="Sprite4" type="Sprite" parent="Ship"]
+visible = false
+position = Vector2( 0, 100 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 9 )
+
+[node name="ProjectileButton" parent="." instance=ExtResource( 1 )]
+margin_left = 24.0
+margin_top = 32.0
+margin_right = 224.0
+margin_bottom = 232.0
+weaponType = "Projectile"
+upgradeCost = 2
+upgradeMultiplier = 2
+
+[node name="PhotonButton" parent="." instance=ExtResource( 1 )]
+margin_left = 232.0
+margin_top = 32.0
+margin_right = 432.0
+margin_bottom = 232.0
+weaponType = "Photon"
+upgradeCost = 4
+upgradeMultiplier = 4
+techNum = 1
+
+[node name="QuantiumButton" parent="." instance=ExtResource( 1 )]
+margin_left = 440.0
+margin_top = 32.0
+margin_right = 640.0
+margin_bottom = 232.0
+weaponType = "Quantium"
+upgradeCost = 6
+upgradeMultiplier = 6
+techNum = 2
+
+[node name="PlankButton" parent="." instance=ExtResource( 1 )]
+margin_left = 648.0
+margin_top = 32.0
+margin_right = 848.0
+margin_bottom = 232.0
+weaponType = "Plank"
+upgradeCost = 8
+upgradeMultiplier = 8
+techNum = 3
+
+[node name="ResourcePanelBG" type="Sprite" parent="."]
+position = Vector2( 1075, 264 )
+scale = Vector2( 1.27483, 1.20534 )
+texture = ExtResource( 10 )
+
+[node name="ProjectileResearch" parent="ResourcePanelBG" instance=ExtResource( 11 )]
+margin_left = -116.878
+margin_top = -167.588
+margin_right = 120.122
+margin_bottom = -127.588
+autowrap = true
+researchType = "Projectile"
+researchGenerationSpeed = 1
+researchEnabled = true
+nextResearchType = "../PhotonResearch"
+nextResearchTypeCost = 10
+
+[node name="PhotonResearch" parent="ResourcePanelBG" instance=ExtResource( 11 )]
+visible = false
+margin_left = -116.878
+margin_top = -102.876
+margin_right = 120.122
+margin_bottom = -62.876
+autowrap = true
+researchType = "Photon"
+researchGenerationSpeed = 30
+nextResearchType = "../QuantiumResearch"
+nextResearchTypeCost = 100
+
+[node name="QuantiumResearch" parent="ResourcePanelBG" instance=ExtResource( 11 )]
+visible = false
+margin_left = -116.878
+margin_top = -36.5044
+margin_right = 120.122
+margin_bottom = 3.49562
+autowrap = true
+researchType = "Quantium"
+researchGenerationSpeed = 40
+nextResearchType = "../PlankResearch"
+nextResearchTypeCost = 1000
+
+[node name="PlankResearch" parent="ResourcePanelBG" instance=ExtResource( 11 )]
+visible = false
+margin_left = -116.878
+margin_top = 25.719
+margin_right = 120.122
+margin_bottom = 65.719
+autowrap = true
+researchType = "Plank"
+researchGenerationSpeed = 50
+nextResearchType = "../Research"
+nextResearchTypeCost = 10000
+
+[node name="Research" parent="ResourcePanelBG" instance=ExtResource( 11 )]
+visible = false
+margin_left = -116.878
+margin_top = 88.772
+margin_right = 120.122
+margin_bottom = 128.772
+autowrap = true
+researchType = "New Tech"
+researchGenerationSpeed = -1
+nextResearchType = "../Research"
+
+[node name="BattleButton" type="Button" parent="."]
+margin_left = 885.0
+margin_top = 517.0
+margin_right = 1264.0
+margin_bottom = 713.0
+text = "Launch"
+
+[node name="BattleSimulation" type="Node" parent="."]
+script = ExtResource( 12 )
+
+[node name="Timer" type="Timer" parent="BattleSimulation"]
+
+[connection signal="pressed" from="BattleButton" to="." method="ChangeToBattleScene"]
+[connection signal="timeout" from="BattleSimulation/Timer" to="BattleSimulation" method="battleTick"]
+
+[editable path="ResourcePanelBG/ProjectileResearch"]

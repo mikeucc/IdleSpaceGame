@@ -1,0 +1,151 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://Ship.cs" type="Script" id=1]
+[ext_resource path="res://Art/space_ships/TM_1.png" type="Texture" id=2]
+[ext_resource path="res://Starfield.cs" type="Script" id=3]
+[ext_resource path="res://Art/space_ships/TM_2.png" type="Texture" id=4]
+[ext_resource path="res://Player.cs" type="Script" id=5]
+[ext_resource path="res://Art/Target.png" type="Texture" id=6]
+[ext_resource path="res://Enemy.cs" type="Script" id=7]
+[ext_resource path="res://MissileRadar.cs" type="Script" id=8]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform vec4 bg_color: hint_color;
+
+
+float rand(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	float size = 100.0;
+	float prob = 0.9;
+	vec2 pos = floor(1.0 / size * FRAGCOORD.xy);
+	float color = 0.0;
+	float starValue = rand(pos);
+	
+
+	if (starValue > prob)
+	{
+		vec2 center = size * pos + vec2(size, size) * 0.5;
+		float t = 0.9 + 0.2 * sin(TIME * 8.0 + (starValue - prob) / (1.0 - prob) * 45.0);
+		color = 1.0 - distance(FRAGCOORD.xy, center) / (0.5 * size);
+		color = color * t / (abs(FRAGCOORD.y - center.y)) * t / (abs((FRAGCOORD.x) - center.x));
+	}
+	else if (rand(SCREEN_UV.xy / 20.0) > 0.996)
+	{
+		float r = rand(SCREEN_UV.xy);
+		color = r * (0.85 * sin(TIME * (r * 5.0) + 720.0 * r) + 0.95);
+	}
+	COLOR = vec4(vec3(color),1.0) + bg_color;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/bg_color = Color( 0.0666667, 0.00392157, 0.00392157, 0 )
+
+[sub_resource type="NoiseTexture" id=3]
+flags = 2
+width = 5000
+height = 800
+
+[sub_resource type="CapsuleShape2D" id=5]
+radius = 88.0
+height = 248.0
+
+[sub_resource type="Shader" id=9]
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 9 )
+
+[sub_resource type="CircleShape2D" id=6]
+radius = 80.0
+
+[sub_resource type="CapsuleShape2D" id=4]
+height = 32.0
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Starfield" type="Sprite" parent="."]
+material = SubResource( 2 )
+position = Vector2( -2.38419e-07, 0 )
+scale = Vector2( 0.256, 1 )
+texture = SubResource( 3 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 5000, 720 )
+script = ExtResource( 3 )
+
+[node name="Player" type="KinematicBody2D" parent="."]
+collision_mask = 2
+script = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2( 200, 310 )
+rotation = 1.5708
+scale = Vector2( 0.25, 0.25 )
+shape = SubResource( 5 )
+
+[node name="Ship" type="Sprite" parent="Player"]
+position = Vector2( 204, 310 )
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 2 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+radarColour = Color( 0.901961, 0.0901961, 0.0901961, 0.501961 )
+maxRadarRange = 5000
+
+[node name="Accuracy" type="Node2D" parent="Player/Ship"]
+position = Vector2( 250, 75 )
+
+[node name="Position2D" type="Position2D" parent="Player/Ship/Accuracy"]
+
+[node name="MissileRadar" type="Area2D" parent="Player/Ship/Accuracy/Position2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource( 8 )
+
+[node name="Pulse" type="CollisionShape2D" parent="Player/Ship/Accuracy/Position2D/MissileRadar"]
+material = SubResource( 10 )
+shape = SubResource( 6 )
+
+[node name="Timer" type="Timer" parent="Player/Ship"]
+wait_time = 0.1
+
+[node name="EnemySpawner" type="Position2D" parent="."]
+position = Vector2( 900, 352 )
+
+[node name="Enemy" type="KinematicBody2D" parent="EnemySpawner"]
+collision_layer = 2
+collision_mask = 6
+script = ExtResource( 7 )
+
+[node name="Sprite" type="Sprite" parent="EnemySpawner/Enemy"]
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 4 )
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemySpawner/Enemy"]
+rotation = 1.5708
+shape = SubResource( 4 )
+
+[node name="Targeted" type="Sprite" parent="EnemySpawner/Enemy"]
+visible = false
+self_modulate = Color( 0.854902, 0.129412, 0.129412, 1 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 6 )
+
+[node name="Button" type="Button" parent="."]
+margin_left = 1200.0
+margin_top = 688.0
+margin_right = 1272.0
+margin_bottom = 708.0
+text = "Return"
+
+[connection signal="body_entered" from="Player/Ship/Accuracy/Position2D/MissileRadar" to="Player" method="OnMissileRadarBodyEntered"]
+[connection signal="timeout" from="Player/Ship/Timer" to="Player" method="projectileWeaponCooldown"]
+[connection signal="pressed" from="Button" to="Starfield" method="OnButtonPressed"]

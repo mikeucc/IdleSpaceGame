@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Label.cs" type="Script" id=1]
+[ext_resource path="res://Font/romulus.tres" type="DynamicFont" id=2]
+
+[node name="ActionLabel" type="Label"]
+margin_right = 806.0
+margin_bottom = 22.0
+custom_fonts/font = ExtResource( 2 )
+max_lines_visible = 10
+script = ExtResource( 1 )
